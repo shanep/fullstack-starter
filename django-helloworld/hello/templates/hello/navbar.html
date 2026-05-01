@@ -6,13 +6,19 @@
     <link rel="stylesheet" href="{% static 'style.css' %}?v=2">
     <style>
 
-
+        .top_navbar_space_reserve {
+            width: 100%;
+            height: 120px;
+        }
 
     </style>
     <title>Navbar</title>
 </head>
 <body>
-    <nav class="navbar navbar-expand-lg bg-body-tertiary" data-bs-theme="dark">
+    <!-- Make sure to include the navbar at the top of the body of the page that way the space
+    reserve works properly -->
+    <div class="top_navbar_space_reserve"></div>
+    <nav class="navbar navbar-expand-lg fixed-top bg-body-tertiary" data-bs-theme="dark">
         <div class="container-fluid">
             <img class="navbar_logo_icon" src="{% static 'tempLogo.jpg' %}" alt="Logo" width="80" height="80" >
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavDropdown" aria-controls="navbarNavDropdown" aria-expanded="false" aria-label="Toggle navigation">
@@ -29,16 +35,21 @@
                     <li class="nav-item">
                         <a class="nav-link active" href="/hello/statistics">Statistics</a>
                     </li>
-                    <li class="nav-item dropdown">
+                    {% if user.is_authenticated %}
+                    <li class="d-flex dropdown ms-auto">
                         <a class="nav-link active dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                            Account
+                            Logged in: {{ user.username }}
                         </a>
                         <ul class="dropdown-menu">
-                            <li><a class="dropdown-item" href="#">Action</a></li>
-                            <li><a class="dropdown-item" href="#">Another action</a></li>
-                            <li><a class="dropdown-item" href="#">Something else here</a></li>
+                            <li><a class="dropdown-item" href="#">Account Page</a></li>
+                            <li><a class="dropdown-item --bs-danger-bg-subtle" href="{% url 'logout' %}">Logout</a></li>
                         </ul>
                     </li>
+                    {% else %}
+                        <li class="nav-item">
+                            <a class="nav-link active" href="{% url 'login' %}?next={{request.path}}">Login</a>
+                        </li>
+                    {% endif %}
                 </ul>
 
             </div>

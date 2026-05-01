@@ -39,12 +39,13 @@ def register_view(request):
 
 def login_view(request):
     # ... (Keep your existing login code here)
+    next_url = request.GET.get('next') or '/'
     if request.method == "POST":
         form = UserLoginForm(request, data=request.POST)
         if form.is_valid():
             user = form.get_user()
             login(request, user)
-            return redirect('hello')
+            return redirect(next_url)
     else:
         form = UserLoginForm()
     return render(request, "hello/login.html", {"form": form})
@@ -56,7 +57,7 @@ def tic_tac_toe_view(request):
 
 def logout_view(request):
     logout(request)  # This destroys the session
-    return redirect('hello')
+    return redirect(request.META.get('HTTP_REFERER', '/'))
 
 
 def game_directory_view(request):
