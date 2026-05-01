@@ -13,6 +13,18 @@ document.addEventListener('DOMContentLoaded', () => {
     const drawButton = document.getElementById('draw-button');
     const stockStatus = document.getElementById('stock-status');
 
+    const createCardElement = (card) => {
+        const cardEl = document.createElement('div');
+        cardEl.className = `card ${card.color.toLowerCase()}`;
+        cardEl.draggable = true;
+        cardEl.dataset.rank = card.rank;
+        cardEl.dataset.suit = card.suit;
+        cardEl.dataset.color = card.color.toLowerCase();
+        cardEl.dataset.faceUp = 'true';
+        cardEl.textContent = `${card.rank_display} ${card.suit_symbol}`;
+        return cardEl;
+    };
+
     const renderWaste = () => {
         wastePile.innerHTML = '';
         if (wasteCards.length === 0) {
@@ -20,15 +32,7 @@ document.addEventListener('DOMContentLoaded', () => {
             return;
         }
         wasteCards.forEach(card => {
-            const cardEl = document.createElement('div');
-            cardEl.className = `card ${card.color.toLowerCase()}`;
-            cardEl.draggable = true;
-            cardEl.dataset.rank = card.rank;
-            cardEl.dataset.suit = card.suit;
-            cardEl.dataset.color = card.color.toLowerCase();
-            cardEl.dataset.faceUp = 'true';
-            cardEl.textContent = `${card.rank_display} ${card.suit_symbol}`;
-            wastePile.appendChild(cardEl);
+            wastePile.appendChild(createCardElement(card));
         });
         initializeDragAndDrop();
     };
@@ -46,22 +50,51 @@ document.addEventListener('DOMContentLoaded', () => {
     };
 
     const drawCard = () => {
-        if (stockCards.length === 0) {
-            return;
+        if (stockCards.length === 0) return;
+
+        const gameVariant = document.body.dataset.variant;
+
+        if (gameVariant === 'Spider') {
+            const tableauColumns = document.querySelectorAll('.pile.tableau');
+            if (stockCards.length >= tableauColumns.length) {
+                tableauColumns.forEach(column => {
+                    const cardData = stockCards.pop();
+                    cardData.is_face_up = true;
+                    const emptyPlaceholder = column.querySelector('.empty-card');
+                    if (emptyPlaceholder) emptyPlaceholder.remove();
+                    column.appendChild(createCardElement(cardData));
+                });
+                updateStockCount();
+                initializeDragAndDrop();
+                moveCount++; 
+            } else {
+                console.log("Not enough cards in stock to deal Spider row.");
+            }
+        } else {
+            const card = stockCards.pop();
+            card.is_face_up = true;
+            wasteCards.push(card);
+            renderWaste();
+            updateStockCount();
+            moveCount++; 
         }
-        const card = stockCards.pop();
-        card.is_face_up = true;
-        wasteCards.push(card);
-        renderWaste();
-        updateStockCount();
     };
 
     drawButton?.addEventListener('click', drawCard);
     stockPile?.addEventListener('click', drawCard);
-    renderWaste();
+    
+    if (document.body.dataset.variant !== 'Spider') {
+        renderWaste();
+    }
+    
     updateStockCount();
     initializeDragAndDrop();
 });
+
+let moveCount = 0;
+let draggedCard = null;
+let draggedCards = [];
+let originalParent = null;
 
 function initializeDragAndDrop() {
     const cards = document.querySelectorAll('.card[draggable="true"]');
@@ -86,11 +119,6 @@ function initializeDragAndDrop() {
     });
 }
 
-let draggedCard = null;
-let draggedCards = [];
-let originalParent = null;
-
-// --- CARD DRAG FUNCTIONS ---
 function dragStart(e) {
     if (this.dataset.faceUp !== 'true' || this.classList.contains('face-down')) {
         e.preventDefault();
@@ -118,9 +146,8 @@ function dragEnd(e) {
     draggedCards = [];
 }
 
-// --- PILE DROP FUNCTIONS ---
 function dragOver(e) {
-    e.preventDefault(); // REQUIRED to allow dropping!
+    e.preventDefault(); 
     if (e.dataTransfer) {
         e.dataTransfer.dropEffect = 'move';
     }
@@ -158,20 +185,27 @@ function dragDrop(e) {
 
     const targetCard = findTopCard(destination);
     if (isValidMove(draggedCard, destinationType, targetCard)) {
+        
+        const emptyPlaceholder = destination.querySelector('.empty-card');
+        if (emptyPlaceholder) emptyPlaceholder.remove();
+
         draggedCards.forEach(card => destination.appendChild(card));
         revealNextFaceDownCard(originalParent);
+        
+        moveCount++;
+        checkWinCondition();
+        
     } else {
         invalidMove();
     }
 }
 
 function revealNextFaceDownCard(pile) {
-    if (!pile || pile.dataset.pileType !== 'tableau') {
-        return;
-    }
+    if (!pile || pile.dataset.pileType !== 'tableau') return;
 
     const cards = Array.from(pile.querySelectorAll('.card'));
     if (!cards.length) {
+        pile.innerHTML = '<div class="empty-card">Empty</div>';
         return;
     }
 
@@ -191,21 +225,12 @@ function getRankDisplay(rank) {
 }
 
 function getSuitSymbol(suit) {
-    return {
-        'Hearts': '♥',
-        'Diamonds': '♦',
-        'Clubs': '♣',
-        'Spades': '♠'
-    }[suit] || suit;
+    return {'Hearts': '♥', 'Diamonds': '♦', 'Clubs': '♣', 'Spades': '♠'}[suit] || suit;
 }
 
 function getDropDestination(target) {
-    if (!target) {
-        return null;
-    }
-    if (target.classList.contains('pile')) {
-        return target;
-    }
+    if (!target) return null;
+    if (target.classList.contains('pile')) return target;
     return target.closest('.pile');
 }
 
@@ -215,35 +240,39 @@ function findTopCard(pile) {
 }
 
 function isValidMove(card, destinationType, topCard) {
-    if (!card || card.dataset.faceUp !== 'true') {
-        return false;
-    }
+    if (!card || card.dataset.faceUp !== 'true') return false;
 
     const cardRank = parseInt(card.dataset.rank, 10);
     const cardSuit = card.dataset.suit;
     const cardColor = card.dataset.color;
 
+    if (destinationType === 'freecell') {
+        if (draggedCards.length > 1) return false; 
+        if (topCard) return false; 
+        return true; 
+    }
+
     if (destinationType === 'foundation') {
-        if (draggedCards.length > 1) {
-            return false; // only single cards may move to the foundation
-        }
-        if (!topCard) {
-            return cardRank === 1;
-        }
+        if (draggedCards.length > 1) return false; 
+        if (!topCard) return cardRank === 1;
         const topRank = parseInt(topCard.dataset.rank, 10);
         const topSuit = topCard.dataset.suit;
         return topSuit === cardSuit && cardRank === topRank + 1;
     }
 
     if (destinationType === 'tableau') {
-        if (!topCard) {
-            return cardRank === 13;
-        }
+        const gameVariant = document.body.dataset.variant;
+        if (!topCard) return cardRank === 13; 
+        
         const topRank = parseInt(topCard.dataset.rank, 10);
+        
+        if (gameVariant === 'Spider') {
+            return cardRank === topRank - 1;
+        }
+
         const topColor = topCard.dataset.color;
         return topColor !== cardColor && cardRank === topRank - 1;
     }
-
     return false;
 }
 
@@ -253,4 +282,70 @@ function invalidMove() {
     }
     draggedCard = null;
     draggedCards = [];
+}
+
+// --- WIN CHECK & API SAVE ---
+function checkWinCondition() {
+    const foundations = document.querySelectorAll('.pile[data-pile-type="foundation"]');
+    let totalCardsInFoundations = 0;
+    
+    const gameVariant = document.body.dataset.variant;
+    const requiredCards = (gameVariant === 'Spider') ? 104 : 52;
+
+    foundations.forEach(foundation => {
+        totalCardsInFoundations += foundation.querySelectorAll('.card').length;
+    });
+
+    if (totalCardsInFoundations === requiredCards) {
+        alert(`🎉 You won in ${moveCount} moves! Saving your score to the leaderboard...`);
+        saveGameResult(true);
+    }
+}
+
+function saveGameResult(isWon) {
+    const sessionId = document.body.dataset.sessionId;
+    if (!sessionId) {
+        console.error("No session ID found, cannot save game.");
+        return;
+    }
+
+    const score = Math.max(0, 5000 - (moveCount * 10));
+
+    fetch('/api/save-game-result/', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-CSRFToken': getCookie('csrftoken')
+        },
+        body: JSON.stringify({
+            session_id: sessionId,
+            is_won: isWon,
+            score: score,
+            moves: moveCount
+        })
+    })
+    .then(response => response.json())
+    .then(data => {
+        if(data.status === 'success') {
+            window.location.href = '/statistics/';
+        } else {
+            console.error("Failed to save game:", data.message);
+        }
+    })
+    .catch(error => console.error("Error saving game:", error));
+}
+
+function getCookie(name) {
+    let cookieValue = null;
+    if (document.cookie && document.cookie !== '') {
+        const cookies = document.cookie.split(';');
+        for (let i = 0; i < cookies.length; i++) {
+            const cookie = cookies[i].trim();
+            if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                break;
+            }
+        }
+    }
+    return cookieValue;
 }

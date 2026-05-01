@@ -4,6 +4,16 @@
 {% endif %}
 <div class="solitaire-board"> 
     <div class="top-row"> 
+        
+        <div class="freecell-container d-flex gap-2">
+            <div class="pile freecell" data-pile-type="freecell"></div>
+            <div class="pile freecell" data-pile-type="freecell"></div>
+            <div class="pile freecell" data-pile-type="freecell"></div>
+            <div class="pile freecell" data-pile-type="freecell"></div>
+        </div>
+
+        <div class="spacer"></div> 
+        
         <div class="pile stock" id="stock-pile" data-pile-type="stock">
             {% if game.stock_count > 0 %}
                 <div class="card card-back" data-face-up="false"></div>
@@ -29,7 +39,9 @@
                 <div class="empty-card">Waste</div>
             {% endif %}
         </div> 
+
         <div class="spacer"></div> 
+        
         {% for foundation in game.foundations %}
             <div class="pile foundation" data-pile-type="foundation">
                 {% if foundation %}
@@ -50,9 +62,10 @@
             </div>
         {% endfor %}
     </div> 
-    <div class="action-row mb-3">
+    
+    <div class="action-row mb-3 mt-3 d-flex justify-content-center align-items-center gap-3">
         <button id="draw-button" class="btn btn-primary">Draw Card</button>
-        <span id="stock-status" class="badge bg-light text-dark">Stock: {{ game.stock_count }}</span>
+        <span id="stock-status" class="badge bg-light text-dark fs-6">Stock: {{ game.stock_count }}</span>
     </div>
     
     <div class="tableau-row"> 

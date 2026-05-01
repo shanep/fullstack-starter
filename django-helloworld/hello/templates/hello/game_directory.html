@@ -4,54 +4,65 @@
 <head>
     <meta charset="UTF-8">
     <title>Game Directory</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <style>
-
-        body {
-            background: linear-gradient(to bottom,#4F5357 30%, #5C6570 100% );
-            height: 100vh;
-        }
-
-        .directory_title{
-            display: inline-block;
-            width: 100%;
-            align-content: center;
-            text-align: center;
-            margin-top: 40px;
-            color: #EBEDED;
-        }
-
-        .game-thumbnail {
-            display: inline-block;
-            aspect-ratio: 2 / 1; /* Thumbnails should be 2000px wide by 1000px tall */
-            width: 90%; /* Takes up 90% of the width of the select container */
-            height: auto;
-            align-content: center;
-            align-items: center;
-            margin: 20px auto;
-        }
-
+        body { background: linear-gradient(to bottom,#4F5357 30%, #5C6570 100% ); min-height: 100vh; }
+        .directory_title { text-align: center; padding: 40px 0; color: #EBEDED; }
         .Game_Select_Container {
-            display: -ms-flexbox;
             background: #414447;
-            width: 20%;
+            padding: 20px;
             text-align: center;
-            margin: 20px 30px;
-            box-shadow: 0 4px 10px #27282B;
-        }
-
-        .Game_Select_Container .btn {
-            display: inline-block;
+            border-radius: 8px;
             margin-bottom: 20px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+            height: 100%;
         }
 
         .Game_Selection_Area {
             margin-top: 50px;
         }
 
+        .game-thumbnail { width: 100%; border-radius: 4px; margin-bottom: 15px; aspect-ratio: 16/9; object-fit: cover; }
     </style>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
 </head>
 <body>
+    <nav class="navbar navbar-dark bg-dark">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="{% url 'index' %}">Polymorphic Games</a>
+            <div class="d-flex">
+                <a href="{% url 'statistics' %}" class="btn btn-outline-light btn-sm me-2">Stats</a>
+                <a href="{% url 'logout' %}" class="btn btn-outline-danger btn-sm">Logout</a>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container">
+        <div class="directory_title">
+            <h1>Select Your Game</h1>
+        </div>
+
+        <div class="row g-4">
+            <div class="col-md-6 col-lg-4">
+                <div class="Game_Select_Container">
+                    <img src="{% static 'Tic-tac-toe-thumbnail.png' %}" class="game-thumbnail">
+                    <h3>Tic-Tac-Toe</h3>
+                    <p class="text-light opacity-75">Classic 3-in-a-row.</p>
+                    <a href="{% url 'tic_tac_toe' %}" class="btn btn-secondary w-100">Play Now</a>
+                </div>
+            </div>
+
+            <div class="col-md-6 col-lg-4">
+                <div class="Game_Select_Container">
+                    <img src="{% static 'Solitaire-Thumbnail.png' %}" class="game-thumbnail">
+                    <h3>Solitaire Collection</h3>
+                    <p class="text-light opacity-75">Choose your challenge:</p>
+                    <div class="d-grid gap-2">
+                        <a href="{% url 'play_game' variant_name='Klondike' %}" class="btn btn-primary">Play Klondike</a>
+                        <a href="{% url 'play_game' variant_name='Spider' %}" class="btn btn-primary">Play Spider</a>
+                        <a href="{% url 'play_game' variant_name='FreeCell' %}" class="btn btn-primary">Play FreeCell</a>
+                    </div>
+                </div>
+            </div>
     {% include "hello/navbar.html" %}
     <div class="directory_title">
         <h1>Game Select</h1>
