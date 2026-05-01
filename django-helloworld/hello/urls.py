@@ -6,7 +6,7 @@ urlpatterns = [
     path('', views.hello_world, name='hello'),
     path('index/', views.index_view, name='index'),
     
-    # CHANGE THIS LINE: from 'games/' to 'directory/'
+
     path('directory/', views.game_directory_view, name='game_directory'), 
     
     path('play/<str:variant_name>/', views.play_game, name='play_game'),
