@@ -55,11 +55,7 @@
     <link rel="stylesheet" href="{% static 'style.css' %}?v=2">
 </head>
 <body>
-    <nav class="navbar bg-body-tertiary">
-        <div class="container-fluid">
-            <a class="navbar-brand" href="#">Navbar</a>
-        </div>
-    </nav>
+    {% include "hello/navbar.html" %}
 
     <div class="game-page-title">
         <h1>Tic-Tac-Toe</h1>

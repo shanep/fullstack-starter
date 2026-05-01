@@ -61,3 +61,7 @@ def logout_view(request):
 
 def game_directory_view(request):
     return render(request, "hello/game_directory.html")
+
+
+def statistics_view(request):
+    return render(request, "hello/Statistics.html")

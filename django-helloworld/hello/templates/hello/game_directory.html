@@ -1,9 +1,9 @@
 <!DOCTYPE html>
 <html lang="en">
+{% load static %}
 <head>
     <meta charset="UTF-8">
     <title>Game Directory</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <style>
 
         body {
@@ -16,7 +16,7 @@
             width: 100%;
             align-content: center;
             text-align: center;
-            padding-top: 20px;
+            margin-top: 40px;
             color: #EBEDED;
         }
 
@@ -44,36 +44,38 @@
             margin-bottom: 20px;
         }
 
+        .Game_Selection_Area {
+            margin-top: 50px;
+        }
+
     </style>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
 </head>
 <body>
-    {%  load static %}
-    <nav class="navbar bg-body-tertiary">
-        <div class="container-fluid">
-            <a class="navbar-brand" href="#">Navbar</a>
-        </div>
-    </nav>
+    {% include "hello/navbar.html" %}
     <div class="directory_title">
         <h1>Game Select</h1>
     </div>
-    <div class ="row"> <!-- Each Column will be populated with four games as more are added-->
-        <div class="Game_Select_Container col">
-            <img src="{% static 'Tic-tac-toe-thumbnail.png' %}" class="game-thumbnail">
-            <a href="{% url 'tic_tac_toe'%}">
-                <button type="button" class="btn btn-secondary">Play Tic-Tac-Toe</button>
-            </a>
-        </div>
-        <div class="Game_Select_Container col">
-            <img src="{% static 'Solitaire-Thumbnail.png' %}" class="game-thumbnail">
-            <a href="{% url 'hello'%}">
-                <button type="button" class="btn btn-secondary">Go to Polymorphic Solitaire</button>
-            </a>
-        </div>
-        <div class="Game_Select_Container col">
+    <div class="Game_Selection_Area">
+        <div class ="row"> <!-- Each Column will be populated with four games as more are added-->
+            <div class="Game_Select_Container col">
+                <img src="{% static 'Tic-tac-toe-thumbnail.png' %}" class="game-thumbnail">
+                <a href="{% url 'tic_tac_toe'%}">
+                    <button type="button" class="btn btn-secondary">Play Tic-Tac-Toe</button>
+                </a>
+            </div>
+            <div class="Game_Select_Container col">
+                <img src="{% static 'Solitaire-Thumbnail.png' %}" class="game-thumbnail">
+                <a href="{% url 'hello'%}">
+                    <button type="button" class="btn btn-secondary">Go to Polymorphic Solitaire</button>
+                </a>
+            </div>
+            <div class="Game_Select_Container col">
 
-        </div>
-        <div class="Game_Select_Container col">
+            </div>
+            <div class="Game_Select_Container col">
 
+            </div>
         </div>
     </div>
 </body>
