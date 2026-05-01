@@ -22,8 +22,8 @@
 
         .game-thumbnail {
             display: inline-block;
-            aspect-ratio: 2 / 1; /* Thumbnails should be 2000px wide by 1000px tall */
-            width: 90%; /* Takes up 90% of the width of the select container */
+            aspect-ratio: 2 / 1; 
+            width: 90%; 
             height: auto;
             align-content: center;
             align-items: center;
@@ -56,13 +56,14 @@
     <div class="directory_title">
         <h1>Game Select</h1>
     </div>
-    <div class ="row"> <div class="Game_Select_Container col">
+    <div class ="row"> 
+        <div class="Game_Select_Container col">
             <img src="{% static 'Tic-tac-toe-thumbnail.png' %}" class="game-thumbnail">
             <a href="{% url 'tic_tac_toe' %}" class="btn btn-secondary">Play Tic-Tac-Toe</a>
         </div>
         <div class="Game_Select_Container col">
             <img src="{% static 'Solitaire-Thumbnail.png' %}" class="game-thumbnail">
-            <a href="{% url 'play_game' variant_name='Solitaire' %}" class="btn btn-secondary">Go to Polymorphic Solitaire</a>
+            <a href="{% url 'play_game' variant_name='Klondike' %}" class="btn btn-secondary">Go to Polymorphic Solitaire</a>
         </div>
         <div class="Game_Select_Container col">
 
