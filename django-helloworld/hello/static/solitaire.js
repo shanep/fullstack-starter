@@ -13,6 +13,19 @@ document.addEventListener('DOMContentLoaded', () => {
     const drawButton = document.getElementById('draw-button');
     const stockStatus = document.getElementById('stock-status');
 
+    // Helper function to create DOM card elements
+    const createCardElement = (card) => {
+        const cardEl = document.createElement('div');
+        cardEl.className = `card ${card.color.toLowerCase()}`;
+        cardEl.draggable = true;
+        cardEl.dataset.rank = card.rank;
+        cardEl.dataset.suit = card.suit;
+        cardEl.dataset.color = card.color.toLowerCase();
+        cardEl.dataset.faceUp = 'true';
+        cardEl.textContent = `${card.rank_display} ${card.suit_symbol}`;
+        return cardEl;
+    };
+
     const renderWaste = () => {
         wastePile.innerHTML = '';
         if (wasteCards.length === 0) {
@@ -20,15 +33,7 @@ document.addEventListener('DOMContentLoaded', () => {
             return;
         }
         wasteCards.forEach(card => {
-            const cardEl = document.createElement('div');
-            cardEl.className = `card ${card.color.toLowerCase()}`;
-            cardEl.draggable = true;
-            cardEl.dataset.rank = card.rank;
-            cardEl.dataset.suit = card.suit;
-            cardEl.dataset.color = card.color.toLowerCase();
-            cardEl.dataset.faceUp = 'true';
-            cardEl.textContent = `${card.rank_display} ${card.suit_symbol}`;
-            wastePile.appendChild(cardEl);
+            wastePile.appendChild(createCardElement(card));
         });
         initializeDragAndDrop();
     };
@@ -49,16 +54,49 @@ document.addEventListener('DOMContentLoaded', () => {
         if (stockCards.length === 0) {
             return;
         }
-        const card = stockCards.pop();
-        card.is_face_up = true;
-        wasteCards.push(card);
-        renderWaste();
-        updateStockCount();
+
+        // NEW: Check which variant we are playing!
+        const gameVariant = document.body.dataset.variant;
+
+        if (gameVariant === 'Spider') {
+            // SPIDER LOGIC: Deal 1 card to each tableau column
+            const tableauColumns = document.querySelectorAll('.pile.tableau');
+            
+            // Only deal if we have enough cards
+            if (stockCards.length >= tableauColumns.length) {
+                tableauColumns.forEach(column => {
+                    const cardData = stockCards.pop();
+                    cardData.is_face_up = true; // Make sure it's face up
+                    
+                    // Remove the 'Empty' placeholder if it exists
+                    const emptyPlaceholder = column.querySelector('.empty-card');
+                    if (emptyPlaceholder) emptyPlaceholder.remove();
+                    
+                    column.appendChild(createCardElement(cardData));
+                });
+                updateStockCount();
+                initializeDragAndDrop();
+            } else {
+                console.log("Not enough cards in stock to deal Spider row.");
+            }
+        } else {
+            // KLONDIKE LOGIC: Pop 1 card to waste
+            const card = stockCards.pop();
+            card.is_face_up = true;
+            wasteCards.push(card);
+            renderWaste();
+            updateStockCount();
+        }
     };
 
     drawButton?.addEventListener('click', drawCard);
     stockPile?.addEventListener('click', drawCard);
-    renderWaste();
+    
+    // Only render waste if we aren't playing Spider
+    if (document.body.dataset.variant !== 'Spider') {
+        renderWaste();
+    }
+    
     updateStockCount();
     initializeDragAndDrop();
 });
@@ -120,7 +158,7 @@ function dragEnd(e) {
 
 // --- PILE DROP FUNCTIONS ---
 function dragOver(e) {
-    e.preventDefault(); // REQUIRED to allow dropping!
+    e.preventDefault(); 
     if (e.dataTransfer) {
         e.dataTransfer.dropEffect = 'move';
     }
@@ -158,6 +196,11 @@ function dragDrop(e) {
 
     const targetCard = findTopCard(destination);
     if (isValidMove(draggedCard, destinationType, targetCard)) {
+        
+        // Remove empty placeholders if dropping onto an empty pile
+        const emptyPlaceholder = destination.querySelector('.empty-card');
+        if (emptyPlaceholder) emptyPlaceholder.remove();
+
         draggedCards.forEach(card => destination.appendChild(card));
         revealNextFaceDownCard(originalParent);
     } else {
@@ -172,6 +215,8 @@ function revealNextFaceDownCard(pile) {
 
     const cards = Array.from(pile.querySelectorAll('.card'));
     if (!cards.length) {
+        // If pile is completely empty, add the empty placeholder back
+        pile.innerHTML = '<div class="empty-card">Empty</div>';
         return;
     }
 
@@ -223,9 +268,20 @@ function isValidMove(card, destinationType, topCard) {
     const cardSuit = card.dataset.suit;
     const cardColor = card.dataset.color;
 
+    // --- NEW: FREECELL LOGIC ---
+    if (destinationType === 'freecell') {
+        if (draggedCards.length > 1) {
+            return false; // Can only move one card into a FreeCell
+        }
+        if (topCard) {
+             return false; // FreeCell must be empty
+        }
+        return true; 
+    }
+
     if (destinationType === 'foundation') {
         if (draggedCards.length > 1) {
-            return false; // only single cards may move to the foundation
+            return false; 
         }
         if (!topCard) {
             return cardRank === 1;
@@ -236,10 +292,20 @@ function isValidMove(card, destinationType, topCard) {
     }
 
     if (destinationType === 'tableau') {
+        const gameVariant = document.body.dataset.variant;
+
         if (!topCard) {
-            return cardRank === 13;
+            return cardRank === 13; // King to empty space
         }
+        
         const topRank = parseInt(topCard.dataset.rank, 10);
+        
+        // SPIDER LOGIC: Any suit can be placed on top of rank + 1
+        if (gameVariant === 'Spider') {
+            return cardRank === topRank - 1;
+        }
+
+        // KLONDIKE & FREECELL LOGIC: Alternating colors
         const topColor = topCard.dataset.color;
         return topColor !== cardColor && cardRank === topRank - 1;
     }
