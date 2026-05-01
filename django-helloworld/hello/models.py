@@ -72,7 +72,6 @@ class GameSession(models.Model):
     
     # This will let you save the exact state of the cards if they leave midway!
     game_state = models.JSONField(null=True, blank=True)
-    created_at = models.DateTimeField(auto_now_add=True)
 
     def save(self, *args, **kwargs):
         """Calculate time_elapsed when game ends"""
