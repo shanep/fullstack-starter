@@ -1,3 +1,4 @@
+{% load static %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -7,12 +8,11 @@
     <style>
         body { background: linear-gradient(to bottom,#4F5357 30%, #5C6570 100% ); min-height: 100vh; }
         .directory_title { text-align: center; padding: 40px 0; color: #EBEDED; }
-        .Game_Select_Container { background: #414447; padding: 20px; text-align: center; border-radius: 8px; margin-bottom: 20px; }
+        .Game_Select_Container { background: #414447; padding: 20px; text-align: center; border-radius: 8px; margin-bottom: 20px; box-shadow: 0 4px 10px #27282B; }
         .game-thumbnail { width: 100%; border-radius: 4px; margin-bottom: 15px; }
     </style>
 </head>
 <body>
-    {% load static %}
     <nav class="navbar navbar-dark bg-dark">
         <div class="container-fluid">
             <a class="navbar-brand" href="{% url 'index' %}">Polymorphic Games</a>
@@ -39,8 +39,10 @@
             <div class="col-md-4">
                 <div class="Game_Select_Container">
                     <img src="{% static 'Solitaire-Thumbnail.png' %}" class="game-thumbnail">
-                    <a href="{% url 'play_game' variant_name='Klondike' %}" class="btn btn-primary w-100 mb-2">Klondike</a>
-                    <a href="{% url 'play_game' variant_name='Spider' %}" class="btn btn-primary w-100">Spider</a>
+                    <div class="d-grid gap-2">
+                        <a href="{% url 'play_game' variant_name='Klondike' %}" class="btn btn-primary">Klondike</a>
+                        <a href="{% url 'play_game' variant_name='Spider' %}" class="btn btn-primary">Spider</a>
+                    </div>
                 </div>
             </div>
         </div>
