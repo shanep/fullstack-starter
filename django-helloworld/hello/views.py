@@ -19,11 +19,10 @@ def game_directory_view(request):
     return render(request, "hello/game_directory.html", context)
 
 def hello_world(request):
-    # REMOVED: redirect(game_directory) 
-    # This allows authenticated users to stay on the Solitaire Hub page
+    # Authenticated users stay here to see the Solitaire variant selector (The Hub)
     return render(request, "hello/hello_world.html")
 
-@login_required(login_url='hello:login')
+@login_required(login_url='login')
 def play_game(request, variant_name):
     try:
         variant = GameVariant.objects.get(name__iexact=variant_name)
@@ -37,7 +36,7 @@ def play_game(request, variant_name):
     elif variant_name.lower() == 'freecell':
         game_obj = FreeCell()
     else:
-        return redirect('hello:game_directory')
+        return redirect('game_directory')
     
     game_obj.setup_board()
     game = game_obj.to_dict()
@@ -57,7 +56,7 @@ def register_view(request):
             user = form.save()
             PlayerProfile.objects.get_or_create(user=user)
             login(request, user)
-            return redirect('hello:hello')
+            return redirect('hello')
     else:
         form = UserRegistrationForm()
     return render(request, "hello/register.html", {"form": form})
@@ -68,19 +67,19 @@ def login_view(request):
         if form.is_valid():
             user = form.get_user()
             login(request, user)
-            return redirect('hello:hello')
+            return redirect('hello')
     else:
         form = UserLoginForm()
     return render(request, "hello/login.html", {"form": form})
 
 def logout_view(request):
     logout(request)
-    return redirect('hello:index')
+    return redirect('index')
 
 def tic_tac_toe_view(request):
     return render(request, "hello/tic_tac_toe.html")
 
-@login_required(login_url='hello:login')
+@login_required(login_url='login')
 def statistics_view(request):
     player_profile, _ = PlayerProfile.objects.get_or_create(user=request.user)
     player_profile.update_stats()
@@ -92,7 +91,7 @@ def statistics_view(request):
         'leaderboard': leaderboard,
     })
 
-@login_required(login_url='hello:login')
+@login_required(login_url='login')
 def game_history_view(request):
     variant = request.GET.get('variant', None)
     query = GameSession.objects.filter(player=request.user, is_completed=True).order_by('-end_time')
@@ -104,7 +103,7 @@ def game_history_view(request):
         'selected_variant': variant,
     })
 
-@login_required(login_url='hello:login')
+@login_required(login_url='login')
 @require_POST
 def save_game_result(request):
     import json
