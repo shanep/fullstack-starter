@@ -8,8 +8,16 @@
     <style>
         body { background: linear-gradient(to bottom,#4F5357 30%, #5C6570 100% ); min-height: 100vh; }
         .directory_title { text-align: center; padding: 40px 0; color: #EBEDED; }
-        .Game_Select_Container { background: #414447; padding: 20px; text-align: center; border-radius: 8px; margin-bottom: 20px; box-shadow: 0 4px 10px #27282B; }
-        .game-thumbnail { width: 100%; border-radius: 4px; margin-bottom: 15px; }
+        .Game_Select_Container { 
+            background: #414447; 
+            padding: 20px; 
+            text-align: center; 
+            border-radius: 8px; 
+            margin-bottom: 20px; 
+            box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+            height: 100%;
+        }
+        .game-thumbnail { width: 100%; border-radius: 4px; margin-bottom: 15px; aspect-ratio: 16/9; object-fit: cover; }
     </style>
 </head>
 <body>
@@ -28,20 +36,25 @@
             <h1>Select Your Game</h1>
         </div>
 
-        <div class="row"> 
-            <div class="col-md-4">
+        <div class="row g-4"> 
+            <div class="col-md-6 col-lg-4">
                 <div class="Game_Select_Container">
                     <img src="{% static 'Tic-tac-toe-thumbnail.png' %}" class="game-thumbnail">
-                    <a href="{% url 'tic_tac_toe' %}" class="btn btn-secondary w-100">Play Tic-Tac-Toe</a>
+                    <h3>Tic-Tac-Toe</h3>
+                    <p class="text-light opacity-75">Classic 3-in-a-row.</p>
+                    <a href="{% url 'tic_tac_toe' %}" class="btn btn-secondary w-100">Play Now</a>
                 </div>
             </div>
 
-            <div class="col-md-4">
+            <div class="col-md-6 col-lg-4">
                 <div class="Game_Select_Container">
                     <img src="{% static 'Solitaire-Thumbnail.png' %}" class="game-thumbnail">
+                    <h3>Solitaire Collection</h3>
+                    <p class="text-light opacity-75">Choose your challenge:</p>
                     <div class="d-grid gap-2">
-                        <a href="{% url 'play_game' variant_name='Klondike' %}" class="btn btn-primary">Klondike</a>
-                        <a href="{% url 'play_game' variant_name='Spider' %}" class="btn btn-primary">Spider</a>
+                        <a href="{% url 'play_game' variant_name='Klondike' %}" class="btn btn-primary">Play Klondike</a>
+                        <a href="{% url 'play_game' variant_name='Spider' %}" class="btn btn-primary">Play Spider</a>
+                        <a href="{% url 'play_game' variant_name='FreeCell' %}" class="btn btn-primary">Play FreeCell</a>
                     </div>
                 </div>
             </div>
