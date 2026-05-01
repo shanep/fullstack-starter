@@ -50,7 +50,6 @@ class GameVariant(models.Model):
     difficulty = models.CharField(max_length=10, choices=DIFFICULTY_CHOICES, default='medium')
     deck_count = models.IntegerField(default=1)  # 1 or 2 decks
     rules = models.TextField(blank=True)
-    created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
         return self.name
