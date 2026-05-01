@@ -9,13 +9,11 @@
             background: linear-gradient(to bottom,#4F5357 30%, #5C6570 100% );
             min-height: 100vh;
         }
-
         .directory_title{
             text-align: center;
             padding: 40px 0;
             color: #EBEDED;
         }
-
         .game-thumbnail {
             aspect-ratio: 2 / 1; 
             width: 100%; 
@@ -23,7 +21,6 @@
             object-fit: cover;
             border-radius: 8px 8px 0 0;
         }
-
         .Game_Select_Container {
             background: #414447;
             padding: 0;
@@ -32,13 +29,10 @@
             box-shadow: 0 10px 20px rgba(0,0,0,0.3);
             border-radius: 8px;
             transition: transform 0.2s;
-            border: none;
         }
-
         .Game_Select_Container:hover {
             transform: translateY(-5px);
         }
-
         .Game_Select_Container .btn {
             margin: 20px;
             width: 80%;
@@ -49,10 +43,10 @@
     {% load static %}
     <nav class="navbar navbar-dark bg-dark">
         <div class="container-fluid">
-            <a class="navbar-brand" href="{% url 'index' %}">Polymorphic Games</a>
+            <a class="navbar-brand" href="{% url 'hello:index' %}">Polymorphic Games</a>
             <div class="d-flex">
-                <a href="{% url 'statistics' %}" class="btn btn-outline-light btn-sm me-2">Stats</a>
-                <a href="{% url 'logout' %}" class="btn btn-outline-danger btn-sm">Logout</a>
+                <a href="{% url 'hello:statistics' %}" class="btn btn-outline-light btn-sm me-2">Stats</a>
+                <a href="{% url 'hello:logout' %}" class="btn btn-outline-danger btn-sm">Logout</a>
             </div>
         </div>
     </nav>
@@ -67,14 +61,14 @@
             <div class="col-md-4">
                 <div class="Game_Select_Container">
                     <img src="{% static 'Tic-tac-toe-thumbnail.png' %}" class="game-thumbnail">
-                    <a href="{% url 'tic_tac_toe' %}" class="btn btn-secondary">Play Tic-Tac-Toe</a>
+                    <a href="{% url 'hello:tic_tac_toe' %}" class="btn btn-secondary">Play Tic-Tac-Toe</a>
                 </div>
             </div>
 
             <div class="col-md-4">
                 <div class="Game_Select_Container">
                     <img src="{% static 'Solitaire-Thumbnail.png' %}" class="game-thumbnail">
-                    <a href="{% url 'hello' %}" class="btn btn-primary">Solitaire Hub</a>
+                    <a href="{% url 'hello:hello' %}" class="btn btn-primary">Solitaire Hub</a>
                 </div>
             </div>
         </div>
