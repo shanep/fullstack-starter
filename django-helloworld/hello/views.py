@@ -32,10 +32,11 @@ def game_directory_view(request):
 @login_required(login_url='login')
 def play_game(request, variant_name):
     """Play a specific game variant"""
+    # Create the variant if it doesn't exist yet to prevent silent redirects
     try:
         variant = GameVariant.objects.get(name__iexact=variant_name)
     except GameVariant.DoesNotExist:
-        return redirect('game_directory')
+        variant = GameVariant.objects.create(name=variant_name.capitalize())
     
     game = None
     if variant_name.lower() == 'klondike':
@@ -61,7 +62,9 @@ def play_game(request, variant_name):
         'variant': variant,
         'session_id': session.id
     }
-    return render(request, "hello/game.html", context)
+    
+    # FIX: Pointing this to Solitaire.html instead of game.html!
+    return render(request, "hello/Solitaire.html", context)
 
 
 # --- Existing Views ---
@@ -73,7 +76,6 @@ def hello_world(request):
 
 
 def register_view(request):
-    # ... (Keep your existing register code here)
     if request.method == "POST":
         form = UserRegistrationForm(request.POST)
         if form.is_valid():
@@ -87,7 +89,6 @@ def register_view(request):
 
 
 def login_view(request):
-    # ... (Keep your existing login code here)
     if request.method == "POST":
         form = UserLoginForm(request, data=request.POST)
         if form.is_valid():
@@ -104,7 +105,7 @@ def tic_tac_toe_view(request):
 
 
 def logout_view(request):
-    logout(request)  # This destroys the session
+    logout(request)
     return redirect('index')
 
 
@@ -115,10 +116,7 @@ def statistics_view(request):
     player_profile = PlayerProfile.objects.get(user=request.user)
     player_profile.update_stats()
     
-    # Player's stats by variant
     user_stats = GameStatistic.objects.filter(player=request.user)
-    
-    # Global leaderboard
     leaderboard = PlayerProfile.objects.all().order_by('-total_wins')[:10]
     
     context = {
@@ -142,7 +140,7 @@ def game_history_view(request):
     if variant:
         query = query.filter(game_variant__name__iexact=variant)
     
-    games = query[:50]  # Limit to 50 most recent games
+    games = query[:50] 
     variants = GameVariant.objects.all()
     
     context = {
@@ -175,11 +173,9 @@ def save_game_result(request):
         session.is_completed = True
         session.save()
         
-        # Update player profile
         profile = PlayerProfile.objects.get(user=request.user)
         profile.update_stats()
         
-        # Update game statistics
         stat, created = GameStatistic.objects.get_or_create(
             player=request.user,
             game_variant=session.game_variant
