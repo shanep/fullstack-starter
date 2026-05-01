@@ -12,7 +12,6 @@ class PlayerProfile(models.Model):
     total_losses = models.IntegerField(default=0)
     best_score = models.IntegerField(default=0)
     average_completion_time = models.FloatField(default=0.0)  # in seconds
-    created_at = models.DateTimeField(auto_now_add=True)
 
     def win_percentage(self):
         if self.total_games_played == 0:
