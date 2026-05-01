@@ -56,18 +56,13 @@
     <div class="directory_title">
         <h1>Game Select</h1>
     </div>
-    <div class ="row"> <!-- Each Column will be populated with four games as more are added-->
-        <div class="Game_Select_Container col">
+    <div class ="row"> <div class="Game_Select_Container col">
             <img src="{% static 'Tic-tac-toe-thumbnail.png' %}" class="game-thumbnail">
-            <a href="{% url 'tic_tac_toe'%}">
-                <button type="button" class="btn btn-secondary">Play Tic-Tac-Toe</button>
-            </a>
+            <a href="{% url 'tic_tac_toe' %}" class="btn btn-secondary">Play Tic-Tac-Toe</a>
         </div>
         <div class="Game_Select_Container col">
             <img src="{% static 'Solitaire-Thumbnail.png' %}" class="game-thumbnail">
-            <a href="{% url 'play_game' variant_name='Solitaire' %}">
-                <button type="button" class="btn btn-secondary">Go to Polymorphic Solitaire</button>
-            </a>
+            <a href="{% url 'play_game' variant_name='Solitaire' %}" class="btn btn-secondary">Go to Polymorphic Solitaire</a>
         </div>
         <div class="Game_Select_Container col">
 
