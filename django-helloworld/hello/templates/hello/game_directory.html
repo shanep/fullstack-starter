@@ -5,38 +5,10 @@
     <title>Game Directory</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <style>
-        body {
-            background: linear-gradient(to bottom,#4F5357 30%, #5C6570 100% );
-            min-height: 100vh;
-        }
-        .directory_title{
-            text-align: center;
-            padding: 40px 0;
-            color: #EBEDED;
-        }
-        .game-thumbnail {
-            aspect-ratio: 2 / 1; 
-            width: 100%; 
-            height: auto;
-            object-fit: cover;
-            border-radius: 8px 8px 0 0;
-        }
-        .Game_Select_Container {
-            background: #414447;
-            padding: 0;
-            text-align: center;
-            margin: 20px;
-            box-shadow: 0 10px 20px rgba(0,0,0,0.3);
-            border-radius: 8px;
-            transition: transform 0.2s;
-        }
-        .Game_Select_Container:hover {
-            transform: translateY(-5px);
-        }
-        .Game_Select_Container .btn {
-            margin: 20px;
-            width: 80%;
-        }
+        body { background: linear-gradient(to bottom,#4F5357 30%, #5C6570 100% ); min-height: 100vh; }
+        .directory_title { text-align: center; padding: 40px 0; color: #EBEDED; }
+        .Game_Select_Container { background: #414447; padding: 20px; text-align: center; border-radius: 8px; margin-bottom: 20px; }
+        .game-thumbnail { width: 100%; border-radius: 4px; margin-bottom: 15px; }
     </style>
 </head>
 <body>
@@ -54,21 +26,21 @@
     <div class="container">
         <div class="directory_title">
             <h1>Select Your Game</h1>
-            <p class="text-light opacity-75">Choose a game to start playing</p>
         </div>
 
-        <div class="row justify-content-center"> 
+        <div class="row"> 
             <div class="col-md-4">
                 <div class="Game_Select_Container">
                     <img src="{% static 'Tic-tac-toe-thumbnail.png' %}" class="game-thumbnail">
-                    <a href="{% url 'tic_tac_toe' %}" class="btn btn-secondary">Play Tic-Tac-Toe</a>
+                    <a href="{% url 'tic_tac_toe' %}" class="btn btn-secondary w-100">Play Tic-Tac-Toe</a>
                 </div>
             </div>
 
             <div class="col-md-4">
                 <div class="Game_Select_Container">
                     <img src="{% static 'Solitaire-Thumbnail.png' %}" class="game-thumbnail">
-                    <a href="{% url 'hello' %}" class="btn btn-primary">Solitaire Hub</a>
+                    <a href="{% url 'play_game' variant_name='Klondike' %}" class="btn btn-primary w-100 mb-2">Klondike</a>
+                    <a href="{% url 'play_game' variant_name='Spider' %}" class="btn btn-primary w-100">Spider</a>
                 </div>
             </div>
         </div>

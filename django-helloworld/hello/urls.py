@@ -17,9 +17,9 @@ urlpatterns = [
     path('login/', views.login_view, name='login'),
     path('logout/', views.logout_view, name='logout'),
     
-    # Legacy routes
+    # Games
     path('tic_tac_toe/', views.tic_tac_toe_view, name='tic_tac_toe'),
     
-    # API endpoints
+    # API
     path('api/save-game-result/', views.save_game_result, name='save_game_result'),
 ]
