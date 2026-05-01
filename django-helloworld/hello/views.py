@@ -14,25 +14,16 @@ from .games.spider import Spider
 from .games.freecell import FreeCell
 from datetime import timedelta
 
-
-# --- NEW: Serve the root index.html ---
 def index_view(request):
     return render(request, "hello/index.html", {"message": "Welcome to our CS 408 Project!"})
 
-
-# --- Game Directory View ---
 def game_directory_view(request):
-    """Display all available game variants"""
     variants = GameVariant.objects.all().order_by('name')
     context = {'variants': variants}
     return render(request, "hello/game_directory.html", context)
 
-
-# --- Game View (Dynamic based on variant) ---
 @login_required(login_url='login')
 def play_game(request, variant_name):
-    """Play a specific game variant"""
-    # Create the variant if it doesn't exist yet to prevent silent redirects
     try:
         variant = GameVariant.objects.get(name__iexact=variant_name)
     except GameVariant.DoesNotExist:
@@ -51,7 +42,6 @@ def play_game(request, variant_name):
     game_obj.setup_board()
     game = game_obj.to_dict()
     
-    # Create game session record
     session = GameSession.objects.create(
         player=request.user,
         game_variant=variant
@@ -63,17 +53,12 @@ def play_game(request, variant_name):
         'session_id': session.id
     }
     
-    # FIX: Pointing this to Solitaire.html instead of game.html!
     return render(request, "hello/Solitaire.html", context)
 
-
-# --- Existing Views ---
 def hello_world(request):
-    """Redirect to game directory or show default game"""
     if request.user.is_authenticated:
         return redirect('game_directory')
     return render(request, "hello/hello_world.html")
-
 
 def register_view(request):
     if request.method == "POST":
@@ -87,7 +72,6 @@ def register_view(request):
         form = UserRegistrationForm()
     return render(request, "hello/register.html", {"form": form})
 
-
 def login_view(request):
     if request.method == "POST":
         form = UserLoginForm(request, data=request.POST)
@@ -99,20 +83,15 @@ def login_view(request):
         form = UserLoginForm()
     return render(request, "hello/login.html", {"form": form})
 
-
 def tic_tac_toe_view(request):
     return render(request, "hello/tic_tac_toe.html")
-
 
 def logout_view(request):
     logout(request)
     return redirect('index')
 
-
-# --- Statistics & Leaderboard Views ---
 @login_required(login_url='login')
 def statistics_view(request):
-    """Display player statistics and leaderboard"""
     player_profile = PlayerProfile.objects.get(user=request.user)
     player_profile.update_stats()
     
@@ -126,10 +105,8 @@ def statistics_view(request):
     }
     return render(request, "hello/statistics.html", context)
 
-
 @login_required(login_url='login')
 def game_history_view(request):
-    """Display player's game history"""
     variant = request.GET.get('variant', None)
     
     query = GameSession.objects.filter(
@@ -150,14 +127,10 @@ def game_history_view(request):
     }
     return render(request, "hello/game_history.html", context)
 
-
-# --- AJAX Endpoints for Game Result Recording ---
 @login_required(login_url='login')
 @require_POST
 def save_game_result(request):
-    """AJAX endpoint to save game result"""
     import json
-    
     data = json.loads(request.body)
     session_id = data.get('session_id')
     is_won = data.get('is_won', False)
