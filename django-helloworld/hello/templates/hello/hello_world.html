@@ -10,6 +10,7 @@
         body {
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             min-height: 100vh;
+            min-height: 100vh;
             display: flex;
             align-items: center;
             justify-content: center;
@@ -32,14 +33,19 @@
         .btn-login { background: rgba(255,255,255,0.2); color: white; border: 2px solid white; }
         .btn-group-landing { display: flex; gap: 15px; justify-content: center; }
 
-        img {
+        .Logo img {
+            justify-content: center;
+            align-content: center;
+            width: 500px;
             margin-bottom: 30px;
         }
     </style>
 </head>
 <body>
     <div class="landing-container">
-        <img src="{% static 'tempLogo.jpg' %}" alt="Polymorphic Games Logo">
+        <div class="Logo">
+            <img src="{% static 'Polymorphic Games Logo.png' %}" alt="Polymorphic Games Logo">
+        </div>
         <h1>🎴 Polymorphic Games</h1>
         <p>Play multiple games with variants and track your progress.</p>
         <p>Looks like your not logged in. Some games require an account.</p>
