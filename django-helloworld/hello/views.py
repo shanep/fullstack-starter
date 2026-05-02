@@ -63,14 +63,12 @@ def register_view(request):
 
 
 def login_view(request):
-    # ... (Keep your existing login code here)
-    next_url = request.GET.get('next') or '/'
     if request.method == "POST":
         form = UserLoginForm(request, data=request.POST)
         if form.is_valid():
             user = form.get_user()
             login(request, user)
-            return redirect(next_url)
+            return redirect('hello')
     else:
         form = UserLoginForm()
     return render(request, "hello/login.html", {"form": form})
@@ -83,6 +81,7 @@ def logout_view(request):
 
 def tic_tac_toe_view(request):
     return render(request, "hello/tic_tac_toe.html")
+
 @login_required(login_url='login')
 def statistics_view(request):
     player_profile, _ = PlayerProfile.objects.get_or_create(user=request.user)

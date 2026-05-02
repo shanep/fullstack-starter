@@ -31,21 +31,30 @@
         .btn-play { background: #28a745; color: white; }
         .btn-login { background: rgba(255,255,255,0.2); color: white; border: 2px solid white; }
         .btn-group-landing { display: flex; gap: 15px; justify-content: center; }
+
+        img {
+            margin-bottom: 30px;
+        }
     </style>
 </head>
 <body>
     <div class="landing-container">
-        <h1>🎴 Polymorphic Solitaire</h1>
-        <p>Play multiple solitaire variants and track your progress.</p>
-        
-        <div class="btn-group-landing">
-            {% if user.is_authenticated %}
+        <img src="{% static 'tempLogo.jpg' %}" alt="Polymorphic Games Logo">
+        <h1>🎴 Polymorphic Games</h1>
+        <p>Play multiple games with variants and track your progress.</p>
+        <p>Looks like your not logged in. Some games require an account.</p>
+        {% if user.is_authenticated %}
+            <div class="btn-group-landing">
                 <a href="{% url 'game_directory' %}" class="btn btn-landing btn-play">🎮 Start Playing</a>
                 <a href="{% url 'statistics' %}" class="btn btn-landing btn-login">📊 View Stats</a>
-            {% else %}
+            </div>
+        {% else %}
+            <div class="btn-group-landing">
+                <a href="{% url 'game_directory' %}" class="btn btn-landing btn-play">🎮 Start Playing</a>
                 <a href="{% url 'register' %}" class="btn btn-landing btn-play">Create Account</a>
                 <a href="{% url 'login' %}" class="btn btn-landing btn-login">Login</a>
-            {% endif %}
+            </div>
+        {% endif %}
         </div>
     </div>
 </body>
