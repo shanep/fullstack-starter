@@ -31,7 +31,3 @@ uses Docker for containerization and simplified deployment.
 
 - [Deployment Guide (Manual)](deploy-node/README.md)
 - [AWS EC2 Launch Guide](aws/README.md)
-
-## Team Workflow
-
-- Detail your teams workflow here.
